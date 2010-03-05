@@ -70,7 +70,7 @@ public class DefaultRuntimeSpringConfiguration implements
     protected GenericApplicationContext createApplicationContext(ApplicationContext parent) {
         if(parent != null && beanFactory!=null) {
             if(beanFactory instanceof DefaultListableBeanFactory) {
-                return new GrailsApplicationContext((DefaultListableBeanFactory) beanFactory,parent);
+                return new BeanBuilderApplicationContext((DefaultListableBeanFactory) beanFactory,parent);
             }
             else {
                 throw new IllegalArgumentException("ListableBeanFactory set must be a subclass of DefaultListableBeanFactory");
@@ -78,17 +78,17 @@ public class DefaultRuntimeSpringConfiguration implements
         }
         else if(beanFactory!=null) {
             if(beanFactory instanceof DefaultListableBeanFactory) {
-                return new GrailsApplicationContext((DefaultListableBeanFactory) beanFactory);
+                return new BeanBuilderApplicationContext((DefaultListableBeanFactory) beanFactory);
             }
             else {
                 throw new IllegalArgumentException("ListableBeanFactory set must be a subclass of DefaultListableBeanFactory");
             }
         }
         else if(parent !=null) {
-            return new GrailsApplicationContext(parent);
+            return new BeanBuilderApplicationContext(parent);
         }
         else {
-            return new GrailsApplicationContext();
+            return new BeanBuilderApplicationContext();
         }
     }
 

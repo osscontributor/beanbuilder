@@ -39,27 +39,27 @@ import org.springframework.ui.context.support.UiApplicationContextUtils;
  *        <p/>
  *        Created: Nov 23, 2007
  */
-public class GrailsApplicationContext extends GenericApplicationContext implements GroovyObject {
+public class BeanBuilderApplicationContext extends GenericApplicationContext implements GroovyObject {
     protected MetaClass metaClass;
     private BeanWrapper ctxBean = new BeanWrapperImpl(this);
     private ThemeSource themeSource;
 
-    public GrailsApplicationContext(DefaultListableBeanFactory defaultListableBeanFactory) {
+    public BeanBuilderApplicationContext(DefaultListableBeanFactory defaultListableBeanFactory) {
         super(defaultListableBeanFactory);
         this.metaClass = GroovySystem.getMetaClassRegistry().getMetaClass(getClass());
     }
 
-    public GrailsApplicationContext(DefaultListableBeanFactory defaultListableBeanFactory, ApplicationContext applicationContext) {
+    public BeanBuilderApplicationContext(DefaultListableBeanFactory defaultListableBeanFactory, ApplicationContext applicationContext) {
         super(defaultListableBeanFactory, applicationContext);
         this.metaClass = GroovySystem.getMetaClassRegistry().getMetaClass(getClass());
     }
 
-    public GrailsApplicationContext(org.springframework.context.ApplicationContext parent) throws org.springframework.beans.BeansException {
+    public BeanBuilderApplicationContext(org.springframework.context.ApplicationContext parent) throws org.springframework.beans.BeansException {
         super(parent);
         this.metaClass = GroovySystem.getMetaClassRegistry().getMetaClass(getClass());
     }
 
-    public GrailsApplicationContext() throws org.springframework.beans.BeansException {
+    public BeanBuilderApplicationContext() throws org.springframework.beans.BeansException {
         this.metaClass = GroovySystem.getMetaClassRegistry().getMetaClass(getClass());
     }
 
