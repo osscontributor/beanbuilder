@@ -1,5 +1,6 @@
-package grails.spring
+package org.springframework.context.groovy
 
+import org.springframework.context.groovy.DynamicElementReader;
 import org.w3c.dom.Element
 
 /**

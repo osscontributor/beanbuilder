@@ -1,5 +1,5 @@
 /*
- * Copyright 2010 the original author or authors.
+ * Copyright 2004-2005 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.config.beanbuilder
+package org.springframework.context.groovy
+
+import org.springframework.aop.SpringProxy
+import org.springframework.beans.factory.ObjectFactory
+import org.springframework.beans.factory.config.Scope
+import org.springframework.context.ApplicationContext
+import org.springframework.context.groovy.BeanBuilder;
+import org.springframework.context.support.GenericApplicationContext
+import org.springframework.mock.jndi.SimpleNamingContextBuilder
+import org.springframework.stereotype.Component
+
+/**
+ * @author Graeme Rocher
+ * @since 0.4
+ *
+ */
 
 class BeanBuilderTests extends GroovyTestCase {
-    void testPlaceholder() {}
-/*
+
 	void testImportSpringXml() {
-		def bb = new grails.spring.BeanBuilder()
+		def bb = new BeanBuilder()
 
 		bb.beans {
-			importBeans "classpath:grails/spring/test.xml"
+			importBeans "classpath:spring/test.xml"
 		}
 
 		def ctx = bb.createApplicationContext()
@@ -32,10 +46,10 @@ class BeanBuilderTests extends GroovyTestCase {
 	}
 
 	void testImportBeansFromGroovy() {
-		def bb = new grails.spring.BeanBuilder()
+		def bb = new BeanBuilder()
 
 		bb.beans {
-			importBeans "file:test/resources/spring/test.groovy"
+			importBeans "file:src/test/resources/spring/test.groovy"
 		}
 
 		def ctx = bb.createApplicationContext()
@@ -45,7 +59,7 @@ class BeanBuilderTests extends GroovyTestCase {
 	}
 
     void testInheritPropertiesFromAbstractBean() {
-        def bb = new grails.spring.BeanBuilder()
+        def bb = new BeanBuilder()
 
         bb.beans {
             myB(Bean1){
@@ -70,6 +84,7 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testContextComponentScanSpringTag() {
+		if(notYetImplemented()) return
         def bb = new BeanBuilder()
 
         bb.beans {
@@ -87,7 +102,8 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testUseSpringNamespaceAsMethod() {
-        def bb = new BeanBuilder()
+		if(notYetImplemented()) return
+		def bb = new BeanBuilder()
 
         bb.beans {
             xmlns aop:"http://www.springframework.org/schema/aop"
@@ -122,7 +138,9 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testUseTwoSpringNamespaces() {
-       def bb = new BeanBuilder()
+		if(notYetImplemented()) return
+		
+		def bb = new BeanBuilder()
 
         SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder()
         try {
@@ -190,8 +208,8 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testSpringAOPSupport() {
-
-
+		if(notYetImplemented()) return
+		
         def bb = new BeanBuilder()
 
         bb.beans {
@@ -226,6 +244,8 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testSpringScopedProxyBean() {
+		if(notYetImplemented()) return
+		
         def bb = new BeanBuilder()
 
         GenericApplicationContext appCtx = bb.getSpringConfig().getUnrefreshedApplicationContext()
@@ -251,7 +271,7 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testSpringNamespaceBean() {
-        def bb = new grails.spring.BeanBuilder()
+        def bb = new BeanBuilder()
 
         SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder()
         try {
@@ -274,7 +294,7 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testNamedArgumentConstructor() {
-        def bb = new grails.spring.BeanBuilder()
+        def bb = new BeanBuilder()
         bb.beans {
             holyGrail(HolyGrailQuest)
             knights(KnightOfTheRoundTable, "Camelot", leader:"lancelot", quest: holyGrail)
@@ -292,7 +312,7 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testAbstractBeanDefinition() {      
-          def bb = new grails.spring.BeanBuilder()
+          def bb = new BeanBuilder()
           bb.beans {
               abstractBean {
                   leader = "Lancelot"
@@ -314,7 +334,7 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testAbstractBeanDefinitionWithClass() {
-          def bb = new grails.spring.BeanBuilder()
+          def bb = new BeanBuilder()
           bb.beans {                                          
               abstractBean(KnightOfTheRoundTable) { bean ->
                   bean.'abstract' = true                  
@@ -621,22 +641,22 @@ class BeanBuilderTests extends GroovyTestCase {
 	
 	void testLoadExternalBeans() {
 		def pr = new org.springframework.core.io.support.PathMatchingResourcePatternResolver()
-		def r = pr.getResource("grails/spring/resources1.groovy")
+		def r = pr.getResource("file:src/test/resources/spring/resources1.groovy")
 		
 		def bb = new BeanBuilder()
 		bb.loadBeans(r)
 		
 		def ctx = bb.createApplicationContext()
 		
-		assert ctx.containsBean("dataSource")
+		assert ctx.containsBean("foo")
 		
-		def dataSource = ctx.getBean("dataSource")
+		def foo = ctx.getBean("foo")
 		
 	}
 	
 	void testHolyGrailWiring() {
 
-		def bb = new grails.spring.BeanBuilder()
+		def bb = new BeanBuilder()
 
 		bb.beans {
 		 quest(HolyGrailQuest) 
@@ -692,12 +712,12 @@ class BeanBuilderTests extends GroovyTestCase {
 
 	void testBeanBuilderWithScript() {
         def script = '''
-def bb = new grails.spring.BeanBuilder()
+def bb = new org.springframework.context.groovy.BeanBuilder()
 
 bb.beans {
-quest(grails.spring.HolyGrailQuest) {}
+quest(org.springframework.context.groovy.HolyGrailQuest) {}
 
-knight(grails.spring.KnightOfTheRoundTable, "Bedivere") { quest = quest }
+knight(org.springframework.context.groovy.KnightOfTheRoundTable, "Bedivere") { quest = quest }
 }
 bb.createApplicationContext()
  '''                                                                                
@@ -830,5 +850,4 @@ public class AdvisedPerson {
  public void birthday() {
       ++age;
  }
- */
 }

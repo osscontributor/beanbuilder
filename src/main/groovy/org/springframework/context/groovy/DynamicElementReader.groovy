@@ -1,3 +1,5 @@
+package org.springframework.context.groovy
+
 /*
  * Copyright 2004-2005 the original author or authors.
  *
@@ -13,11 +15,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package grails.spring
 
 import groovy.xml.StreamingMarkupBuilder
 import org.apache.commons.logging.LogFactory
-import org.codehaus.groovy.grails.commons.spring.BeanConfiguration
 import org.springframework.beans.factory.config.BeanDefinitionHolder
 import org.springframework.beans.factory.parsing.BeanDefinitionParsingException
 import org.springframework.beans.factory.parsing.Location
@@ -45,7 +45,7 @@ import org.xml.sax.InputSource
  * Created: Jan 15, 2009
  */
 
-public class DynamicElementReader extends GroovyObjectSupport{
+class DynamicElementReader extends GroovyObjectSupport{
 
 
     private static final LOG = LogFactory.getLog(BeanBuilder)
