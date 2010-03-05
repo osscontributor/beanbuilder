@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/groovy"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/test/groovy"/>
+	<classpathentry kind="src" path="src/test/resources"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="var" path="GRADLE_REPO/org.springframework/spring-core/jars/spring-core-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="var" path="GRADLE_REPO/org.springframework/spring-beans/jars/spring-beans-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="var" path="GRADLE_REPO/commons-logging/commons-logging/jars/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="var" path="GRADLE_REPO/org.codehaus.groovy/groovy/jars/groovy-1.7.1.jar"/>
+	<classpathentry kind="var" path="GRADLE_REPO/org.springframework/spring-context/jars/spring-context-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="var" path="GRADLE_REPO/junit/junit/jars/junit-4.7.jar"/>
+	<classpathentry kind="var" path="GRADLE_REPO/org.springframework/spring-asm/jars/spring-asm-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="var" path="GRADLE_REPO/org.springframework/spring-expression/jars/spring-expression-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="var" path="GRADLE_REPO/asm/asm/jars/asm-3.2.jar"/>
+	<classpathentry kind="var" path="GRADLE_REPO/antlr/antlr/jars/antlr-2.7.7.jar"/>
+	<classpathentry kind="var" path="GRADLE_REPO/org.springframework/spring-aop/jars/spring-aop-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="var" path="GRADLE_REPO/org.springframework/spring-test/jars/spring-test-3.0.0.RELEASE.jar"/>
+	<classpathentry kind="output" path="build/classes/test"/>
+</classpath>
