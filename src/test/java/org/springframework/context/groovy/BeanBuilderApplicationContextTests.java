@@ -12,21 +12,36 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */ 
+ */
 package org.springframework.context.groovy;
 
 import junit.framework.TestCase;
 
 import org.springframework.context.ApplicationContext;
 
-
 public class BeanBuilderApplicationContextTests extends TestCase {
 
-	public void testLoadingConfigFromClasspath() {
-		ApplicationContext ctx = (ApplicationContext) new BeanBuilderApplicationContext("file:src/test/resources/org/springframework/context/groovy/applicationContext.groovy");
-		
+	public void testLoadingConfigFileWithFileReference() {
+		ApplicationContext ctx = (ApplicationContext) new BeanBuilderApplicationContext(
+				"file:src/test/resources/org/springframework/context/groovy/applicationContext.groovy");
+
 		Object framework = ctx.getBean("framework");
 		assertNotNull("could not find framework bean", framework);
 		assertEquals("Grails", framework);
+	}
+
+	public void testLodingMultipleConfigFilesWithFileReferences() {
+		String[] resources = new String[] {
+				"file:src/test/resources/org/springframework/context/groovy/applicationContext2.groovy",
+				"file:src/test/resources/org/springframework/context/groovy/applicationContext.groovy" };
+		ApplicationContext ctx = (ApplicationContext) new BeanBuilderApplicationContext(resources);
+
+		Object framework = ctx.getBean("framework");
+		assertNotNull("could not find framework bean", framework);
+		assertEquals("Grails", framework);
+		
+		Object company = ctx.getBean("company");
+		assertNotNull("could not find company bean", company);
+		assertEquals("SpringSource", company);
 	}
 }

@@ -23,10 +23,13 @@ class BeanBuilderApplicationContext {
 	@Delegate
 	private ApplicationContext applicationContext
 	
-	
-	public BeanBuilderApplicationContext(String string) {
+	public BeanBuilderApplicationContext(String[] resources) {
 		def bb = new BeanBuilder()
-		bb.loadBeans string
+		resources.each { bb.loadBeans it }
 		applicationContext = bb.createApplicationContext()
+	}
+	
+	public BeanBuilderApplicationContext(String resource) {
+		this([resource] as String[])
 	}
 }
