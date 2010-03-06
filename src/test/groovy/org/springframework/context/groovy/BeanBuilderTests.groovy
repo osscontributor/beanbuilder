@@ -36,7 +36,7 @@ class BeanBuilderTests extends GroovyTestCase {
 		def bb = new BeanBuilder()
 
 		bb.beans {
-			importBeans "classpath:spring/test.xml"
+			importBeans "classpath:org/springframework/context/groovy/test.xml"
 		}
 
 		def ctx = bb.createApplicationContext()
