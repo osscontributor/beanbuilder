@@ -49,7 +49,7 @@ class BeanBuilderTests extends GroovyTestCase {
 		def bb = new BeanBuilder()
 
 		bb.beans {
-			importBeans "file:src/test/resources/spring/test.groovy"
+			importBeans "file:src/test/resources/org/springframework/context/groovy/applicationContext.groovy"
 		}
 
 		def ctx = bb.createApplicationContext()
@@ -641,7 +641,7 @@ class BeanBuilderTests extends GroovyTestCase {
 	
 	void testLoadExternalBeans() {
 		def pr = new org.springframework.core.io.support.PathMatchingResourcePatternResolver()
-		def r = pr.getResource("file:src/test/resources/spring/resources1.groovy")
+		def r = pr.getResource("file:src/test/resources/org/springframework/context/groovy/applicationContext.groovy")
 		
 		def bb = new BeanBuilder()
 		bb.loadBeans(r)
