@@ -1,5 +1,5 @@
 /*
- * Copyright 2004-2005 the original author or authors.
+ * Copyright 2010 the original author or authors.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -94,9 +94,6 @@ import org.springframework.util.Assert;
  *   script using either the constructors or the loadBeans(Resource[] resources) method
  * </p>
  * 
- * @author Graeme Rocher
- * @since 0.4
- *
  */
 public class BeanBuilder extends GroovyObjectSupport {
 	private static final Log LOG = LogFactory.getLog(BeanBuilder.class);
