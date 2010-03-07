@@ -28,3 +28,6 @@ sourceSets {
         }
     }
 }
+
+// this shouldn't be necessary with gradle 0.9
+sourceSets.test.resources.filter.excludes -= '**/*.groovy'
