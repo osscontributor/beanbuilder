@@ -21,7 +21,7 @@ import org.springframework.context.ApplicationContext;
 
 public class BeanBuilderApplicationContextTests extends TestCase {
     
-    public void testLodingMultipleConfigFiles() {
+    public void testLoadingMultipleConfigFiles() {
         String[] resources = new String[] {            
             "org/springframework/context/groovy/applicationContext2.groovy",
             "org/springframework/context/groovy/applicationContext.groovy" };
@@ -54,7 +54,7 @@ public class BeanBuilderApplicationContextTests extends TestCase {
         assertEquals("Grails", framework);
     }
 
-    public void testLodingMultipleConfigFilesWithFileReferences() {
+    public void testLoadingMultipleConfigFilesWithFileReferences() {
         String[] resources = new String[] {
             "file:src/test/resources/org/springframework/context/groovy/applicationContext2.groovy",
             "file:src/test/resources/org/springframework/context/groovy/applicationContext.groovy" };
