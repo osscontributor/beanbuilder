@@ -1,0 +1,14 @@
+The Bean Builder project is setup to be built with Gradle.  Thanks to the
+Gradle Wrapper, you do not need to have Gradle installed and configured
+in order to build the project.  The gradlew and gradlew.bat files in the root
+of this project will take care of grabbing the appropriate version of Gradle
+and using it to execute builds.
+
+Examples:
+
+./gradlew clean
+./gradlew test
+
+To see a list of all available targets:
+
+./gradlew -t
