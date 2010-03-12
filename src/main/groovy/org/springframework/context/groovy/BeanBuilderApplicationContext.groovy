@@ -46,4 +46,8 @@ class BeanBuilderApplicationContext {
 	    resources.each { bb.loadBeans it }
 	    applicationContext = bb.createApplicationContext()
 	}
+	
+	def propertyMissing(String propertyName) {
+	    applicationContext.getBean(propertyName)
+    }
 }
