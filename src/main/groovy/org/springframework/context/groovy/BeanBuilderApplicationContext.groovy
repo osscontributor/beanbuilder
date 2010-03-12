@@ -29,7 +29,7 @@ class BeanBuilderApplicationContext {
 	}
 	
 	BeanBuilderApplicationContext(String[] resources) {
-	    loadBeans resources
+	    initializeApplicationContext resources
 	}
 	
 	BeanBuilderApplicationContext(String resource, Class clazz) {
@@ -38,10 +38,10 @@ class BeanBuilderApplicationContext {
     
 	BeanBuilderApplicationContext(String[] resources, Class clazz) {
 		def classPathResources = resources.collect { new ClassPathResource(it, clazz) }
-		loadBeans classPathResources
+		initializeApplicationContext classPathResources
 	}
 	
-	private loadBeans(resources) {
+	private initializeApplicationContext(resources) {
 	    def bb = new BeanBuilder()
 	    resources.each { bb.loadBeans it }
 	    applicationContext = bb.createApplicationContext()
