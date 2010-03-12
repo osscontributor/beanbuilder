@@ -25,9 +25,11 @@ public class BeanBuilderApplicationContextTests extends TestCase {
     NOTE: The code in this test case includes casts that look a bit funky...
     ApplicationContext ctx = (ApplicationContext) new BeanBuilderApplicationContext(resources);
     
-    Important to note is that the cast is only necessary because this test is being compiled
-    along with BeanBuilderApplicationContext.  This is related to a limitation in groovyc with respect
-    to AST transformations, in this case @Delegate.
+    Important to note is that the cast is only necessary because this test is being compiled along
+    with BeanBuilderApplicationContext.  This is related to a limitation in the compiler with respect
+    to AST transformations, in this case @Delegate.  The problem will not show up when building via
+    gradle or other build tools.  The problem may show up in an IDE where the IDE doesn't "think"
+    that BeanBuilderApplicationContext is a ApplicationContext.
     
     Normal users of BeanBuilderApplicationContext will not need to impose this cast
     because the compiled BeanBuilderApplicationContext class will in fact implement ApplicationContext.
