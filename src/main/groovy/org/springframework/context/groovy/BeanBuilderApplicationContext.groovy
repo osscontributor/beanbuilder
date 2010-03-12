@@ -17,19 +17,33 @@ package org.springframework.context.groovy;
 
 
 import org.springframework.context.ApplicationContext 
+import org.springframework.core.io.ClassPathResource
 
 class BeanBuilderApplicationContext {
 	
 	@Delegate
 	private ApplicationContext applicationContext
 	
-	public BeanBuilderApplicationContext(String[] resources) {
-		def bb = new BeanBuilder()
-		resources.each { bb.loadBeans it }
-		applicationContext = bb.createApplicationContext()
-	}
-	
 	public BeanBuilderApplicationContext(String resource) {
 		this([resource] as String[])
+	}
+	
+	public BeanBuilderApplicationContext(String[] resources) {
+	    loadBeans resources
+	}
+	
+	public BeanBuilderApplicationContext(String resource, Class clazz) {
+	    this([resource] as String[], clazz)
+    }
+    
+	public BeanBuilderApplicationContext(String[] resources, Class clazz) {
+		def classPathResources = resources.collect { new ClassPathResource(it, clazz) }
+		loadBeans classPathResources
+	}
+	
+	private loadBeans(resources) {
+	    def bb = new BeanBuilder()
+	    resources.each { bb.loadBeans it }
+	    applicationContext = bb.createApplicationContext()
 	}
 }

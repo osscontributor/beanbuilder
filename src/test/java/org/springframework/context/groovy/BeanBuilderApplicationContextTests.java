@@ -45,6 +45,30 @@ public class BeanBuilderApplicationContextTests extends TestCase {
         assertEquals("Grails", framework);
     }
 
+    public void testLoadingConfigFileRelativeToClass() {
+        ApplicationContext ctx = (ApplicationContext) new BeanBuilderApplicationContext(
+            "applicationContext.groovy", BeanBuilderApplicationContextTests.class);
+
+        Object framework = ctx.getBean("framework");
+        assertNotNull("could not find framework bean", framework);
+        assertEquals("Grails", framework);
+    }
+
+    public void testLoadingMultipleConfigFilesRelativeToClass() {
+        String[] resources = new String[] {            
+            "applicationContext2.groovy",
+            "applicationContext.groovy" };
+        ApplicationContext ctx = (ApplicationContext) new BeanBuilderApplicationContext(resources, BeanBuilderApplicationContextTests.class);
+
+        Object framework = ctx.getBean("framework");
+        assertNotNull("could not find framework bean", framework);
+        assertEquals("Grails", framework);
+
+        Object company = ctx.getBean("company");
+        assertNotNull("could not find company bean", company);
+        assertEquals("SpringSource", company);
+    }
+
     public void testLoadingConfigFileWithFileReference() {
         ApplicationContext ctx = (ApplicationContext) new BeanBuilderApplicationContext(
             "file:src/test/resources/org/springframework/context/groovy/applicationContext.groovy");
