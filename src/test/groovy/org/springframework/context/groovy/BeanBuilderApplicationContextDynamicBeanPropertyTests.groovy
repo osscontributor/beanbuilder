@@ -15,14 +15,27 @@
 */
 package org.springframework.context.groovy
 
+import org.springframework.beans.factory.NoSuchBeanDefinitionException
+
 public class BeanBuilderApplicationContextDynamicBeanPropertyTests extends GroovyTestCase {
     
-    public void testAccessDynamicBeanProperties() {
+    void testAccessDynamicBeanProperties() {
         def ctx = new BeanBuilderApplicationContext(
             "org/springframework/context/groovy/applicationContext.groovy");
 
         def framework = ctx.framework
         assertNotNull 'could not find framework bean', framework
         assertEquals 'Grails', framework
+    }
+    
+    void testAccessingNonExistentBeanViaDynamicProperty() {
+        def ctx = new BeanBuilderApplicationContext(
+            "org/springframework/context/groovy/applicationContext.groovy");
+
+        def err = shouldFail(NoSuchBeanDefinitionException) {
+            ctx.someNonExistentBean
+        }
+        
+        assertEquals "No bean named 'someNonExistentBean' is defined", err
     }
 }
