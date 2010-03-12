@@ -24,19 +24,19 @@ class BeanBuilderApplicationContext {
 	@Delegate
 	private ApplicationContext applicationContext
 	
-	public BeanBuilderApplicationContext(String resource) {
+	BeanBuilderApplicationContext(String resource) {
 		this([resource] as String[])
 	}
 	
-	public BeanBuilderApplicationContext(String[] resources) {
+	BeanBuilderApplicationContext(String[] resources) {
 	    loadBeans resources
 	}
 	
-	public BeanBuilderApplicationContext(String resource, Class clazz) {
+	BeanBuilderApplicationContext(String resource, Class clazz) {
 	    this([resource] as String[], clazz)
     }
     
-	public BeanBuilderApplicationContext(String[] resources, Class clazz) {
+	BeanBuilderApplicationContext(String[] resources, Class clazz) {
 		def classPathResources = resources.collect { new ClassPathResource(it, clazz) }
 		loadBeans classPathResources
 	}
