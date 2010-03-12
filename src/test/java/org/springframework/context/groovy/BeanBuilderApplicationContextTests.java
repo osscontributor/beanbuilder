@@ -105,4 +105,19 @@ public class BeanBuilderApplicationContextTests extends TestCase {
         assertNotNull("could not find company bean", company);
         assertEquals("SpringSource", company);
     }
+
+    public void testLoadingMultipleConfigFilesWithFileAndClasspathReferences() {
+        String[] resources = new String[] {
+            "file:src/test/resources/org/springframework/context/groovy/applicationContext2.groovy",
+            "classpath:org/springframework/context/groovy/applicationContext.groovy" };
+        ApplicationContext ctx = (ApplicationContext) new BeanBuilderApplicationContext(resources);
+
+        Object framework = ctx.getBean("framework");
+        assertNotNull("could not find framework bean", framework);
+        assertEquals("Grails", framework);
+
+        Object company = ctx.getBean("company");
+        assertNotNull("could not find company bean", company);
+        assertEquals("SpringSource", company);
+    }
 }
