@@ -99,17 +99,6 @@ public class DefaultRuntimeSpringConfiguration implements
         this.classLoader = cl;
     }
 
-
-    private void trySettingClassLoaderOnContextIfFoundInParent(ApplicationContext parent) {
-//        if(parent.containsBean(GrailsRuntimeConfigurator.CLASS_LOADER_BEAN)) {
-//            Object classLoader = parent.getBean(GrailsRuntimeConfigurator.CLASS_LOADER_BEAN);
-//            if(classLoader instanceof ClassLoader){
-//                ClassLoader cl = (ClassLoader) classLoader;
-//                setClassLoaderOnContext(cl);
-//            }
-//        }
-    }
-
     private void setClassLoaderOnContext(ClassLoader cl) {
         this.context.setClassLoader(cl);
         this.context.getBeanFactory().setBeanClassLoader(cl);
@@ -121,10 +110,7 @@ public class DefaultRuntimeSpringConfiguration implements
     protected void initialiseApplicationContext() {
         if(this.context == null) {
             this.context = createApplicationContext(this.parent);
-            if(parent != null && classLoader == null){
-                trySettingClassLoaderOnContextIfFoundInParent(parent);
-            }
-            else if(classLoader != null)  {
+            if(classLoader != null)  {
                 setClassLoaderOnContext(classLoader);
             }
 
