@@ -70,7 +70,7 @@ import org.springframework.util.Assert;
  * import org.hibernate.SessionFactory
  * import org.apache.commons.dbcp.BasicDataSource
  * 
- * BeanBuilder builder = new BeanBuilder()
+ * GroovyBeanDefinitionReader builder = new GroovyBeanDefinitionReader()
  * builder.beans {
  *   dataSource(BasicDataSource) {                  // <--- invokeMethod
  *      driverClassName = "org.hsqldb.jdbcDriver"
@@ -95,8 +95,8 @@ import org.springframework.util.Assert;
  * </p>
  * 
  */
-public class BeanBuilder extends GroovyObjectSupport {
-	private static final Log LOG = LogFactory.getLog(BeanBuilder.class);
+public class GroovyBeanDefinitionReader extends GroovyObjectSupport {
+	private static final Log LOG = LogFactory.getLog(GroovyBeanDefinitionReader.class);
 	private static final String CREATE_APPCTX = "createApplicationContext";
     private static final String REGISTER_BEANS = "registerBeans";
     private static final String BEANS = "beans";
@@ -115,24 +115,24 @@ public class BeanBuilder extends GroovyObjectSupport {
     private XmlReaderContext readerContext;
     private ResourcePatternResolver resourcePatternResolver = new PathMatchingResourcePatternResolver();
 
-    public BeanBuilder() {
+    public GroovyBeanDefinitionReader() {
 		this(null,null);
 	}
     
-    public BeanBuilder(ClassLoader classLoader) {
+    public GroovyBeanDefinitionReader(ClassLoader classLoader) {
 		this(null, classLoader);
 	}    
 	
-	public BeanBuilder(ApplicationContext parent) {
+	public GroovyBeanDefinitionReader(ApplicationContext parent) {
         this(parent, null);
 	}	
 	
-	public BeanBuilder(ApplicationContext parent,ClassLoader classLoader) {
+	public GroovyBeanDefinitionReader(ApplicationContext parent,ClassLoader classLoader) {
         this(parent,null, classLoader);
 
     }
 
-    public BeanBuilder(ApplicationContext parentCtx, RuntimeSpringConfiguration springConfig,  ClassLoader classLoader) {
+    public GroovyBeanDefinitionReader(ApplicationContext parentCtx, RuntimeSpringConfiguration springConfig,  ClassLoader classLoader) {
         this.springConfig = springConfig == null ? createRuntimeSpringConfiguration(parentCtx, classLoader) : springConfig;
         this.parentCtx = parentCtx;
         this.classLoader = classLoader;
@@ -147,16 +147,16 @@ public class BeanBuilder extends GroovyObjectSupport {
 
 	protected void initializeSpringConfig() {
         this.xmlBeanDefinitionReader = new XmlBeanDefinitionReader((GenericApplicationContext)springConfig.getUnrefreshedApplicationContext());
-        initializeBeanBuilderForClassLoader(this.classLoader);        
+        initializeGroovyBeanDefinitionReaderForClassLoader(this.classLoader);        
     }
 
     public void setClassLoader(ClassLoader classLoader) {
         this.classLoader = classLoader == null ? getClass().getClassLoader() : classLoader;
-        initializeBeanBuilderForClassLoader(classLoader);
+        initializeGroovyBeanDefinitionReaderForClassLoader(classLoader);
 
     }
 
-    protected void initializeBeanBuilderForClassLoader(ClassLoader classLoader) {
+    protected void initializeGroovyBeanDefinitionReaderForClassLoader(ClassLoader classLoader) {
         xmlBeanDefinitionReader.setBeanClassLoader(classLoader);
         this.namespaceHandlerResolver = new DefaultNamespaceHandlerResolver(this.classLoader);
         this.readerContext = new XmlReaderContext(beanBuildResource,new FailFastProblemReporter(),new EmptyReaderEventListener(),new NullSourceExtractor(),xmlBeanDefinitionReader,namespaceHandlerResolver);
@@ -246,7 +246,7 @@ public class BeanBuilder extends GroovyObjectSupport {
 	}
 
 	/**
-	 * Retrieves the RuntimeSpringConfiguration instance used the the BeanBuilder
+	 * Retrieves the RuntimeSpringConfiguration instance used the the GroovyBeanDefinitionReader
 	 * @return The RuntimeSpringConfiguration instance
 	 */
 	public RuntimeSpringConfiguration getSpringConfig() {
@@ -265,7 +265,7 @@ public class BeanBuilder extends GroovyObjectSupport {
 	}
 
     /**
-     * Retrieves all BeanDefinitions for this BeanBuilder
+     * Retrieves all BeanDefinitions for this GroovyBeanDefinitionReader
      *
      * @return A map of BeanDefinition instances with the bean id as the key
      */
@@ -580,14 +580,14 @@ public class BeanBuilder extends GroovyObjectSupport {
      * Defines a set of beans for the given block or closure.
      *
      * @param c The block or closure
-     * @return This BeanBuilder instance
+     * @return This GroovyBeanDefinitionReader instance
      */
-    public BeanBuilder beans(Closure c) {
+    public GroovyBeanDefinitionReader beans(Closure c) {
         return invokeBeanDefiningClosure(c);
     }
 
     /**
-     * Creates an ApplicationContext from the current state of the BeanBuilder
+     * Creates an ApplicationContext from the current state of the GroovyBeanDefinitionReader
      * @return The ApplicationContext instance
      */
     public ApplicationContext createApplicationContext() {
@@ -727,9 +727,9 @@ public class BeanBuilder extends GroovyObjectSupport {
 	 * When an methods argument is only a closure it is a set of bean definitions
 	 * 
 	 * @param callable The closure argument
-     * @return This BeanBuilder instance
+     * @return This GroovyBeanDefinitionReader instance
 	 */
-	protected BeanBuilder invokeBeanDefiningClosure(Closure callable) {
+	protected GroovyBeanDefinitionReader invokeBeanDefiningClosure(Closure callable) {
 
 		callable.setDelegate(this);
   //      callable.setResolveStrategy(Closure.DELEGATE_FIRST);
@@ -740,7 +740,7 @@ public class BeanBuilder extends GroovyObjectSupport {
     }
 
 	/**
-	 * This method overrides property setting in the scope of the BeanBuilder to set
+	 * This method overrides property setting in the scope of the GroovyBeanDefinitionReader to set
 	 * properties on the current BeanConfiguration
 	 */
 	public void setProperty(String name, Object value) {
@@ -827,11 +827,11 @@ public class BeanBuilder extends GroovyObjectSupport {
 	}
 
 	/**
-	 * This method overrides property retrieval in the scope of the BeanBuilder to either:
+	 * This method overrides property retrieval in the scope of the GroovyBeanDefinitionReader to either:
 	 * 
 	 * a) Retrieve a variable from the bean builder's binding if it exists
 	 * b) Retrieve a RuntimeBeanReference for a specific bean if it exists
-	 * c) Otherwise just delegate to super.getProperty which will resolve properties from the BeanBuilder itself
+	 * c) Otherwise just delegate to super.getProperty which will resolve properties from the GroovyBeanDefinitionReader itself
 	 */
 	public Object getProperty(String name) {
 
@@ -896,7 +896,7 @@ public class BeanBuilder extends GroovyObjectSupport {
     }
 
     /**
-	 * Sets the binding (the variables available in the scope of the BeanBuilder)
+	 * Sets the binding (the variables available in the scope of the GroovyBeanDefinitionReader)
 	 * @param b The Binding instance
 	 */
 	public void setBinding(Binding b) {

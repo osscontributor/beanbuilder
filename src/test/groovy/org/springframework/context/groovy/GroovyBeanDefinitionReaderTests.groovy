@@ -19,43 +19,42 @@ import org.springframework.aop.SpringProxy
 import org.springframework.beans.factory.ObjectFactory
 import org.springframework.beans.factory.config.Scope
 import org.springframework.context.ApplicationContext
-import org.springframework.context.groovy.BeanBuilder;
 import org.springframework.context.support.GenericApplicationContext
 import org.springframework.mock.jndi.SimpleNamingContextBuilder
 import org.springframework.stereotype.Component
 
-class BeanBuilderTests extends GroovyTestCase {
+class GroovyBeanDefinitionReaderTests extends GroovyTestCase {
 
 	void testImportSpringXml() {
-		def bb = new BeanBuilder()
+		def beanReader = new GroovyBeanDefinitionReader()
 
-		bb.beans {
+		beanReader.beans {
 			importBeans "classpath:org/springframework/context/groovy/test.xml"
 		}
 
-		def ctx = bb.createApplicationContext()
+		def ctx = beanReader.createApplicationContext()
 
 		def foo = ctx.getBean("foo")
 		assertEquals "hello", foo
 	}
 
 	void testImportBeansFromGroovy() {
-		def bb = new BeanBuilder()
+		def beanReader = new GroovyBeanDefinitionReader()
 
-		bb.beans {
+		beanReader.beans {
 			importBeans "file:src/test/resources/org/springframework/context/groovy/applicationContext.groovy"
 		}
 
-		def ctx = bb.createApplicationContext()
+		def ctx = beanReader.createApplicationContext()
 
 		def foo = ctx.getBean("foo")
 		assertEquals "hello", foo		
 	}
 
     void testInheritPropertiesFromAbstractBean() {
-        def bb = new BeanBuilder()
+        def beanReader = new GroovyBeanDefinitionReader()
 
-        bb.beans {
+        beanReader.beans {
             myB(Bean1){
                 person = "wombat"
             }
@@ -70,7 +69,7 @@ class BeanBuilderTests extends GroovyTestCase {
             }
         }
 
-        def ctx = bb.createApplicationContext()
+        def ctx = beanReader.createApplicationContext()
         def bean = ctx.getBean("myConcreteB")
 
         assertEquals 10, bean.age  
@@ -79,15 +78,15 @@ class BeanBuilderTests extends GroovyTestCase {
 
     void testContextComponentScanSpringTag() {
 		if(notYetImplemented()) return
-        def bb = new BeanBuilder()
+        def beanReader = new GroovyBeanDefinitionReader()
 
-        bb.beans {
+        beanReader.beans {
             xmlns grailsContext:"http://grails.org/schema/context"
 
             grailsContext.'component-scan'( 'base-package' :"**" )
         }
 
-        def appCtx = bb.createApplicationContext()
+        def appCtx = beanReader.createApplicationContext()
 
         def p = appCtx.getBean("person")
 
@@ -97,9 +96,9 @@ class BeanBuilderTests extends GroovyTestCase {
 
     void testUseSpringNamespaceAsMethod() {
 		if(notYetImplemented()) return
-		def bb = new BeanBuilder()
+		def beanReader = new GroovyBeanDefinitionReader()
 
-        bb.beans {
+        beanReader.beans {
             xmlns aop:"http://www.springframework.org/schema/aop"
 
             fred(AdvisedPerson) {
@@ -118,7 +117,7 @@ class BeanBuilderTests extends GroovyTestCase {
         }
 
 
-        def appCtx = bb.createApplicationContext()
+        def appCtx = beanReader.createApplicationContext()
         def fred = appCtx.getBean("fred")
         assertTrue (fred instanceof SpringProxy )
 
@@ -134,7 +133,7 @@ class BeanBuilderTests extends GroovyTestCase {
     void testUseTwoSpringNamespaces() {
 		if(notYetImplemented()) return
 		
-		def bb = new BeanBuilder()
+		def beanReader = new GroovyBeanDefinitionReader()
 
         SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder()
         try {
@@ -143,9 +142,9 @@ class BeanBuilderTests extends GroovyTestCase {
             builder.activate()
             TestScope scope = new TestScope()
 
-            GenericApplicationContext appCtx = bb.getSpringConfig().getUnrefreshedApplicationContext()
+            GenericApplicationContext appCtx = beanReader.getSpringConfig().getUnrefreshedApplicationContext()
             appCtx.getBeanFactory().registerScope("test", scope)
-            bb.beans {
+            beanReader.beans {
                 xmlns aop:"http://www.springframework.org/schema/aop"
                 xmlns jee:"http://www.springframework.org/schema/jee"
                 scopedList(ArrayList) { bean ->
@@ -157,7 +156,7 @@ class BeanBuilderTests extends GroovyTestCase {
 
             }
 
-            appCtx = bb.createApplicationContext()
+            appCtx = beanReader.createApplicationContext()
 
             assertEquals "success", appCtx.getBean("foo")
 
@@ -168,11 +167,11 @@ class BeanBuilderTests extends GroovyTestCase {
             // should only be true because bean not initialized until proxy called
             assertEquals 2, scope.instanceCount
 
-            bb = new BeanBuilder()
+            beanReader = new GroovyBeanDefinitionReader()
 
-            appCtx = bb.getSpringConfig().getUnrefreshedApplicationContext()
+            appCtx = beanReader.getSpringConfig().getUnrefreshedApplicationContext()
             appCtx.getBeanFactory().registerScope("test", scope)
-            bb.beans {
+            beanReader.beans {
                 xmlns aop:"http://www.springframework.org/schema/aop",
                       jee:"http://www.springframework.org/schema/jee"
                 scopedList(ArrayList) { bean ->
@@ -183,7 +182,7 @@ class BeanBuilderTests extends GroovyTestCase {
                 jee.'jndi-lookup'(id:"foo", 'jndi-name':"bar")
 
             }
-            appCtx = bb.createApplicationContext()
+            appCtx = beanReader.createApplicationContext()
 
             assertEquals "success", appCtx.getBean("foo")
 
@@ -204,9 +203,9 @@ class BeanBuilderTests extends GroovyTestCase {
     void testSpringAOPSupport() {
 		if(notYetImplemented()) return
 		
-        def bb = new BeanBuilder()
+        def beanReader = new GroovyBeanDefinitionReader()
 
-        bb.beans {
+        beanReader.beans {
             xmlns aop:"http://www.springframework.org/schema/aop"
 
             fred(AdvisedPerson) {
@@ -223,7 +222,7 @@ class BeanBuilderTests extends GroovyTestCase {
         }
 
 
-        def appCtx = bb.createApplicationContext()
+        def appCtx = beanReader.createApplicationContext()
         def fred = appCtx.getBean("fred")
         assertTrue (fred instanceof SpringProxy )
 
@@ -240,12 +239,12 @@ class BeanBuilderTests extends GroovyTestCase {
     void testSpringScopedProxyBean() {
 		if(notYetImplemented()) return
 		
-        def bb = new BeanBuilder()
+        def beanReader = new GroovyBeanDefinitionReader()
 
-        GenericApplicationContext appCtx = bb.getSpringConfig().getUnrefreshedApplicationContext()
+        GenericApplicationContext appCtx = beanReader.getSpringConfig().getUnrefreshedApplicationContext()
         TestScope scope = new TestScope()
         appCtx.getBeanFactory().registerScope("test", scope)
-        bb.beans {
+        beanReader.beans {
             xmlns aop:"http://www.springframework.org/schema/aop"
             scopedList(ArrayList) { bean ->
                 bean.scope = "test"
@@ -253,7 +252,7 @@ class BeanBuilderTests extends GroovyTestCase {
             }
         }
 
-        appCtx = bb.createApplicationContext()
+        appCtx = beanReader.createApplicationContext()
 
 
         assertNotNull appCtx.getBean("scopedList")
@@ -265,7 +264,7 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testSpringNamespaceBean() {
-        def bb = new BeanBuilder()
+        def beanReader = new GroovyBeanDefinitionReader()
 
         SimpleNamingContextBuilder builder = new SimpleNamingContextBuilder()
         try {
@@ -273,12 +272,12 @@ class BeanBuilderTests extends GroovyTestCase {
             builder.bind("bar", "success")
             builder.activate()
 
-            bb.beans {
+            beanReader.beans {
                 xmlns jee:"http://www.springframework.org/schema/jee"
                 jee.'jndi-lookup'(id:"foo", 'jndi-name':"bar")
             }
 
-            ApplicationContext appCtx = bb.createApplicationContext()
+            ApplicationContext appCtx = beanReader.createApplicationContext()
 
             assertEquals "success", appCtx.getBean("foo")            
         }
@@ -288,14 +287,14 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testNamedArgumentConstructor() {
-        def bb = new BeanBuilder()
-        bb.beans {
+        def beanReader = new GroovyBeanDefinitionReader()
+        beanReader.beans {
             holyGrail(HolyGrailQuest)
             knights(KnightOfTheRoundTable, "Camelot", leader:"lancelot", quest: holyGrail)
         }
 
 
-        def ctx = bb.createApplicationContext()
+        def ctx = beanReader.createApplicationContext()
 
         KnightOfTheRoundTable knights = ctx.getBean("knights")
         HolyGrailQuest quest = ctx.getBean("holyGrail")
@@ -306,8 +305,8 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testAbstractBeanDefinition() {      
-          def bb = new BeanBuilder()
-          bb.beans {
+          def beanReader = new GroovyBeanDefinitionReader()
+          beanReader.beans {
               abstractBean {
                   leader = "Lancelot"
               }
@@ -317,7 +316,7 @@ class BeanBuilderTests extends GroovyTestCase {
                   quest = quest
               }
           }
-          def ctx = bb.createApplicationContext()
+          def ctx = beanReader.createApplicationContext()
 
           def knights = ctx.knights   
           assert knights
@@ -328,8 +327,8 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testAbstractBeanDefinitionWithClass() {
-          def bb = new BeanBuilder()
-          bb.beans {                                          
+          def beanReader = new GroovyBeanDefinitionReader()
+          beanReader.beans {                                          
               abstractBean(KnightOfTheRoundTable) { bean ->
                   bean.'abstract' = true                  
                   leader = "Lancelot"
@@ -340,7 +339,7 @@ class BeanBuilderTests extends GroovyTestCase {
                   quest = quest
               }
           }
-          def ctx = bb.createApplicationContext()
+          def ctx = beanReader.createApplicationContext()
 
           shouldFail(org.springframework.beans.factory.BeanIsAbstractException) {
               ctx.abstractBean                                                         
@@ -352,14 +351,14 @@ class BeanBuilderTests extends GroovyTestCase {
 
 
     void testScopes() {
-        def bb = new BeanBuilder()
-        bb.beans {
+        def beanReader = new GroovyBeanDefinitionReader()
+        beanReader.beans {
             myBean(ScopeTest) { bean ->
                 bean.scope = "prototype"
             }
             myBean2(ScopeTest)
         }
-        def ctx = bb.createApplicationContext()
+        def ctx = beanReader.createApplicationContext()
 
         def b1 = ctx.myBean
         def b2 = ctx.myBean
@@ -373,8 +372,8 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testSimpleBean() {
-		def bb = new BeanBuilder()
-		bb.beans {
+		def beanReader = new GroovyBeanDefinitionReader()
+		beanReader.beans {
 			bean1(Bean1) {
 				person = "homer"
 				age = 45
@@ -382,7 +381,7 @@ class BeanBuilderTests extends GroovyTestCase {
 				children = ["bart", "lisa"]				         
 			}
 		}
-		def ctx  = bb.createApplicationContext()
+		def ctx  = beanReader.createApplicationContext()
 		
 		assert ctx.containsBean("bean1")
 		def bean1 = ctx.getBean("bean1")
@@ -396,8 +395,8 @@ class BeanBuilderTests extends GroovyTestCase {
 	}
 	
 	void testBeanWithParentRef() {
-		def bb = new BeanBuilder()
-		bb.beans {
+		def beanReader = new GroovyBeanDefinitionReader()
+		beanReader.beans {
 			homer(Bean1) {
 				person = "homer"
 				age = 45
@@ -405,15 +404,15 @@ class BeanBuilderTests extends GroovyTestCase {
 				children = ["bart", "lisa"]				         
 			}
 		}
-		bb = new BeanBuilder(bb.createApplicationContext())
-		bb.beans {
+		beanReader = new GroovyBeanDefinitionReader(beanReader.createApplicationContext())
+		beanReader.beans {
 			bart(Bean2) {
 				person = "bart"
 				parent = ref("homer", true)
 			}
 		}
 		
-		def ctx = bb.createApplicationContext()
+		def ctx = beanReader.createApplicationContext()
         assert ctx != null		
 		assert ctx.containsBean("bart")
 		def bart = ctx.getBean("bart")
@@ -421,8 +420,8 @@ class BeanBuilderTests extends GroovyTestCase {
 	}
 	
 	void testWithAnonymousInnerBean() {
-		def bb = new BeanBuilder()
-		bb.beans {
+		def beanReader = new GroovyBeanDefinitionReader()
+		beanReader.beans {
 			bart(Bean1) {
 				person = "bart"
 				age = 11
@@ -442,7 +441,7 @@ class BeanBuilderTests extends GroovyTestCase {
 			}
 		}
 		
-		def ctx  = bb.createApplicationContext()
+		def ctx  = beanReader.createApplicationContext()
 		
 		def marge = ctx.getBean("marge")
 		
@@ -450,8 +449,8 @@ class BeanBuilderTests extends GroovyTestCase {
 	}
 	
 	void testWithUntypedAnonymousInnerBean() {
-		def bb = new BeanBuilder()
-		bb.beans {
+		def beanReader = new GroovyBeanDefinitionReader()
+		beanReader.beans {
 			homer(Bean1Factory) 
 			bart(Bean1) {
 				person = "bart"
@@ -471,7 +470,7 @@ class BeanBuilderTests extends GroovyTestCase {
 			}
 		}
 		
-		def ctx  = bb.createApplicationContext()
+		def ctx  = beanReader.createApplicationContext()
 		
 		def marge = ctx.getBean("marge")
 		
@@ -479,8 +478,8 @@ class BeanBuilderTests extends GroovyTestCase {
 	}
 	
 	void testBeanReferences() {
-		def bb = new BeanBuilder()
-		bb.beans {
+		def beanReader = new GroovyBeanDefinitionReader()
+		beanReader.beans {
 			homer(Bean1) {
 				person = "homer"
 				age = 45
@@ -501,7 +500,7 @@ class BeanBuilderTests extends GroovyTestCase {
 				children = [bart, lisa]
 			}
 		}
-		def ctx  = bb.createApplicationContext()
+		def ctx  = beanReader.createApplicationContext()
 		
 		def homer = ctx.getBean("homer")
 		def marge = ctx.getBean("marge")
@@ -516,8 +515,8 @@ class BeanBuilderTests extends GroovyTestCase {
 	}
 	
 	void testBeanWithConstructor() {
-		def bb = new BeanBuilder()
-		bb.beans {
+		def beanReader = new GroovyBeanDefinitionReader()
+		beanReader.beans {
 			homer(Bean1) {
 				person = "homer"
 				age = 45
@@ -526,7 +525,7 @@ class BeanBuilderTests extends GroovyTestCase {
 				age = 40				
 			}
 		}	
-		def ctx  = bb.createApplicationContext()
+		def ctx  = beanReader.createApplicationContext()
 		
 		def marge = ctx.getBean("marge")
 		
@@ -536,8 +535,8 @@ class BeanBuilderTests extends GroovyTestCase {
 	}
 	
 	void testBeanWithFactoryMethod() {
-		def bb = new BeanBuilder()
-		bb.beans {
+		def beanReader = new GroovyBeanDefinitionReader()
+		beanReader.beans {
 			homer(Bean1) {
 				person = "homer"
 				age = 45
@@ -547,7 +546,7 @@ class BeanBuilderTests extends GroovyTestCase {
 			}
 			marge.factoryMethod = "getInstance"
 		}	
-		def ctx  = bb.createApplicationContext()
+		def ctx  = beanReader.createApplicationContext()
 		
 		def marge = ctx.getBean("marge")
 		
@@ -556,8 +555,8 @@ class BeanBuilderTests extends GroovyTestCase {
 	}
 	
 	void testBeanWithFactoryMethodUsingClosureArgs() {
-		def bb = new BeanBuilder()
-		bb.beans {
+		def beanReader = new GroovyBeanDefinitionReader()
+		beanReader.beans {
 			homer(Bean1) {
 				person = "homer"
 				age = 45
@@ -567,7 +566,7 @@ class BeanBuilderTests extends GroovyTestCase {
 				person = "marge"				
 			}
 		}	
-		def ctx  = bb.createApplicationContext()
+		def ctx  = beanReader.createApplicationContext()
 		
 		def marge = ctx.getBean("marge")
 		
@@ -575,8 +574,8 @@ class BeanBuilderTests extends GroovyTestCase {
 	}
 
     void testGetBeanDefinitions() {
-        def bb = new BeanBuilder()
-        bb.beans {
+        def beanReader = new GroovyBeanDefinitionReader()
+        beanReader.beans {
             jeff(Bean1) {
                 person = 'jeff'
             }
@@ -588,7 +587,7 @@ class BeanBuilderTests extends GroovyTestCase {
             }
         }
 
-        def beanDefinitions = bb.beanDefinitions
+        def beanDefinitions = beanReader.beanDefinitions
         assertNotNull 'beanDefinitions was null', beanDefinitions
         assertEquals 'beanDefinitions was the wrong size', 3, beanDefinitions.size()
         assertNotNull 'beanDefinitions did not contain jeff', beanDefinitions['jeff']
@@ -597,8 +596,8 @@ class BeanBuilderTests extends GroovyTestCase {
     }
 
     void testBeanWithFactoryBean() {
-		def bb = new BeanBuilder()
-		bb.beans {
+		def beanReader = new GroovyBeanDefinitionReader()
+		beanReader.beans {
 			myFactory(Bean1Factory)
 			
 			homer(myFactory) { bean ->
@@ -608,7 +607,7 @@ class BeanBuilderTests extends GroovyTestCase {
 			}
 		}
 		
-		def ctx  = bb.createApplicationContext()
+		def ctx  = beanReader.createApplicationContext()
 		
 		def homer = ctx.getBean("homer")
 		
@@ -616,8 +615,8 @@ class BeanBuilderTests extends GroovyTestCase {
 	}
 	
 	void testBeanWithFactoryBeanAndMethod() {
-		def bb = new BeanBuilder()
-		bb.beans {
+		def beanReader = new GroovyBeanDefinitionReader()
+		beanReader.beans {
 			myFactory(Bean1Factory)
 			
 			homer(myFactory:"newInstance") { bean ->
@@ -626,7 +625,7 @@ class BeanBuilderTests extends GroovyTestCase {
 			}
 		}
 		
-		def ctx  = bb.createApplicationContext()
+		def ctx  = beanReader.createApplicationContext()
 		
 		def homer = ctx.getBean("homer")
 		
@@ -637,10 +636,10 @@ class BeanBuilderTests extends GroovyTestCase {
 		def pr = new org.springframework.core.io.support.PathMatchingResourcePatternResolver()
 		def r = pr.getResource("file:src/test/resources/org/springframework/context/groovy/applicationContext.groovy")
 		
-		def bb = new BeanBuilder()
-		bb.loadBeans(r)
+		def beanReader = new GroovyBeanDefinitionReader()
+		beanReader.loadBeans(r)
 		
-		def ctx = bb.createApplicationContext()
+		def ctx = beanReader.createApplicationContext()
 		
 		assert ctx.containsBean("foo")
 		
@@ -650,9 +649,9 @@ class BeanBuilderTests extends GroovyTestCase {
 	
 	void testHolyGrailWiring() {
 
-		def bb = new BeanBuilder()
+		def beanReader = new GroovyBeanDefinitionReader()
 
-		bb.beans {
+		beanReader.beans {
 		 quest(HolyGrailQuest) 
 
 		 knight(KnightOfTheRoundTable, "Bedivere") {
@@ -660,7 +659,7 @@ class BeanBuilderTests extends GroovyTestCase {
 		 }
 		}
 
-		def ctx = bb.createApplicationContext()
+		def ctx = beanReader.createApplicationContext()
 
 		def knight = ctx.getBean("knight")
 
@@ -669,9 +668,9 @@ class BeanBuilderTests extends GroovyTestCase {
 	}
 
     void testAbstractBeanSpecifyingClass() {
-        def bb = new BeanBuilder()
+        def beanReader = new GroovyBeanDefinitionReader()
 
-        bb.beans {
+        beanReader.beans {
             abstractKnight(KnightOfTheRoundTable) { bean ->
                 bean.'abstract' = true
                 leader = "King Arthur"
@@ -692,7 +691,7 @@ class BeanBuilderTests extends GroovyTestCase {
         }
 
 
-        def ctx = bb.createApplicationContext()
+        def ctx = beanReader.createApplicationContext()
 
         def lancelot = ctx.getBean("lancelot")
         assertEquals "King Arthur", lancelot.leader
@@ -704,16 +703,16 @@ class BeanBuilderTests extends GroovyTestCase {
         assertEquals "homer", homerBean.person 
     }
 
-	void testBeanBuilderWithScript() {
+	void testGroovyBeanDefinitionReaderWithScript() {
         def script = '''
-def bb = new org.springframework.context.groovy.BeanBuilder()
+def beanReader = new org.springframework.context.groovy.GroovyBeanDefinitionReader()
 
-bb.beans {
+beanReader.beans {
 quest(org.springframework.context.groovy.HolyGrailQuest) {}
 
 knight(org.springframework.context.groovy.KnightOfTheRoundTable, "Bedivere") { quest = quest }
 }
-bb.createApplicationContext()
+beanReader.createApplicationContext()
  '''                                                                                
         def ctx = new GroovyShell().evaluate(script)
 
@@ -723,25 +722,25 @@ bb.createApplicationContext()
 
     // test for GRAILS-5057
     void testRegisterBeans() {
-        def bb = new BeanBuilder()
+        def beanReader = new GroovyBeanDefinitionReader()
 
-        bb.beans {
+        beanReader.beans {
            personA(AdvisedPerson) {
                name = "Bob"
            }
         }
 
-        def appCtx = bb.createApplicationContext()
+        def appCtx = beanReader.createApplicationContext()
 
         assertEquals "Bob", appCtx.getBean("personA").name
 
-        bb = new BeanBuilder()
-        bb.beans {
+        beanReader = new GroovyBeanDefinitionReader()
+        beanReader.beans {
             personA(AdvisedPerson) {
                 name = "Fred"
             }
         }
-        bb.registerBeans(appCtx)
+        beanReader.registerBeans(appCtx)
 
         assertEquals "Fred", appCtx.getBean("personA").name
     }

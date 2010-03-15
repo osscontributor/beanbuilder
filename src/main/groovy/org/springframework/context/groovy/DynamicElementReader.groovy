@@ -34,16 +34,16 @@ import org.xml.sax.ErrorHandler
 import org.xml.sax.InputSource
 
 /**
- * Used by BeanBuilder to read a Spring namespace expression in the Groovy DSL
+ * Used by GroovyBeanDefinitionReader to read a Spring namespace expression in the Groovy DSL
  *
- * @see BeanBuilder
+ * @see GroovyBeanDefinitionReader
  *
  */
 
 class DynamicElementReader extends GroovyObjectSupport{
 
 
-    private static final LOG = LogFactory.getLog(BeanBuilder)
+    private static final LOG = LogFactory.getLog(GroovyBeanDefinitionReader)
 
     private Map xmlNamespaces
     private String rootNamespace

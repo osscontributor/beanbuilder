@@ -17,10 +17,10 @@ package org.springframework.context.groovy
 
 import org.springframework.beans.factory.NoSuchBeanDefinitionException
 
-public class BeanBuilderApplicationContextDynamicBeanPropertyTests extends GroovyTestCase {
+public class GroovyBeanDefinitionApplicationContextDynamicBeanPropertyTests extends GroovyTestCase {
     
     void testAccessDynamicBeanProperties() {
-        def ctx = new BeanBuilderApplicationContext(
+        def ctx = new GroovyBeanDefinitionApplicationContext(
             "org/springframework/context/groovy/applicationContext.groovy");
 
         def framework = ctx.framework
@@ -29,7 +29,7 @@ public class BeanBuilderApplicationContextDynamicBeanPropertyTests extends Groov
     }
     
     void testAccessingNonExistentBeanViaDynamicProperty() {
-        def ctx = new BeanBuilderApplicationContext(
+        def ctx = new GroovyBeanDefinitionApplicationContext(
             "org/springframework/context/groovy/applicationContext.groovy");
 
         def err = shouldFail(NoSuchBeanDefinitionException) {
