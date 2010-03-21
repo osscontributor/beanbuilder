@@ -745,7 +745,26 @@ beanReader.createApplicationContext()
         assertEquals "Fred", appCtx.getBean("personA").name
     }
 
+	// test for GRAILS-4995
+	void testListOfBeansAsConstructorArg() {
+		if(notYetImplemented()) return
+		def beanReader = new GroovyBeanDefinitionReader()
+
+		beanReader.beans {
+			someotherbean(SomeOtherClass, new File('somefile.txt'))
+			someotherbean2(SomeOtherClass, new File('somefile.txt'))
+
+			somebean(SomeClass,  [someotherbean, someotherbean2])
+		}
+
+		def ctx = beanReader.createApplicationContext()
+
+		assert ctx.containsBean('someotherbean')
+		assert ctx.containsBean('someotherbean2')
+		assert ctx.containsBean('somebean')
+	}
 }
+
 class HolyGrailQuest {
 	   void start() { println "lets begin" }
 }
@@ -843,4 +862,12 @@ public class AdvisedPerson {
  public void birthday() {
       ++age;
  }
+}
+
+class SomeClass {
+	public SomeClass(List<SomeOtherClass> soc) {}
+}
+
+class SomeOtherClass {
+	public SomeOtherClass(File f) {}
 }
