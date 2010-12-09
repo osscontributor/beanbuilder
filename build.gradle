@@ -1,6 +1,6 @@
 version = '0.3-SNAPSHOT'
 
-usePlugin 'groovy'
+apply plugin: 'groovy'
 
 repositories { 
     mavenCentral()
@@ -27,6 +27,3 @@ sourceSets {
         }
     }
 }
-
-// this shouldn't be necessary with gradle 0.9
-sourceSets.test.resources.filter.excludes -= '**/*.groovy'
