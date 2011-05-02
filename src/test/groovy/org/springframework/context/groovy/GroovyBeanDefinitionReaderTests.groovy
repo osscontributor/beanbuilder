@@ -794,6 +794,66 @@ beanReader.createApplicationContext()
 		assert ctx.containsBean('someotherbean2')
 		assert ctx.containsBean('somebean')
 	}
+	
+    void testAnonymousInnerBeanViaBeanMethod() {
+        def beanReader = new GroovyBeanDefinitionReader()
+        beanReader.beans {
+            bart(Bean1) {
+                person = "bart"
+                age = 11
+            }
+            lisa(Bean1) {
+                person = "lisa"
+                age = 9
+            }
+            marge(Bean2) {
+                person = "marge"
+                bean1 =  bean(Bean1) {
+                    person = "homer"
+                    age = 45
+                    props = [overweight:true, height:"1.8m"]
+                    children = ["bart", "lisa"]
+                }
+                children = [bart, lisa]
+            }
+        }
+
+        def ctx  = beanReader.createApplicationContext()
+
+        def marge = ctx.getBean("marge")
+
+        assertEquals "homer", marge.bean1.person
+    }
+
+    void testAnonymousInnerBeanViaBeanMethodWithConstructorArgs() {
+        def beanReader = new GroovyBeanDefinitionReader()
+        beanReader.beans {
+            bart(Bean1) {
+                person = "bart"
+                age = 11
+            }
+            lisa(Bean1) {
+                person = "lisa"
+                age = 9
+            }
+            marge(Bean2) {
+                person = "marge"
+                bean3 =  bean(Bean3, "homer", lisa) {
+                    person = "homer"
+                    age = 45
+                }
+                children = [bart, lisa]
+            }
+        }
+
+        def ctx  = beanReader.createApplicationContext()
+
+        def marge = ctx.getBean("marge")
+
+        assertEquals "homer", marge.bean3.person
+        assertEquals "lisa", marge.bean3.bean1.person
+    }
+
 }
 
 class HolyGrailQuest {
@@ -824,6 +884,7 @@ class Bean2 {
     int age
 	String person
 	Bean1 bean1
+	Bean3 bean3
 	Properties props
 	List children
 	Bean1 parent

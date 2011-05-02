@@ -43,6 +43,7 @@ import org.springframework.beans.factory.parsing.FailFastProblemReporter;
 import org.springframework.beans.factory.parsing.Location;
 import org.springframework.beans.factory.parsing.NullSourceExtractor;
 import org.springframework.beans.factory.parsing.Problem;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.ManagedList;
 import org.springframework.beans.factory.support.ManagedMap;
@@ -761,6 +762,53 @@ public class GroovyBeanDefinitionReader extends GroovyObjectSupport {
 		}		
 	}
 
+    /**
+     * Defines an inner bean definition
+     *
+     * @param type The bean type
+     * @return The bean definition
+     */
+    public AbstractBeanDefinition bean(Class type) {
+        return springConfig.createSingletonBean(type).getBeanDefinition();
+    }
+
+    /**
+     * Defines an inner bean definition
+     *
+     * @param type The bean type
+     * @param args The constructors arguments and closure configurer
+     * @return The bean definition
+     */
+    public AbstractBeanDefinition bean(Class type, Object...args) {
+        BeanConfiguration current = currentBeanConfig;
+        try {
+
+            Closure callable = null;
+            Collection constructorArgs = null;
+            if(args != null && args.length > 0) {
+                int index = args.length;
+                Object lastArg = args[index-1];
+
+                if(lastArg instanceof Closure) {
+                    callable = (Closure) lastArg;
+                    index--;
+                }
+                if(index > -1) {
+                    constructorArgs = resolveConstructorArguments(args, 0, index);
+                }
+            }
+            currentBeanConfig =  constructorArgs != null ? springConfig.createSingletonBean(type,constructorArgs) : springConfig.createSingletonBean(type);
+            if(callable != null) {
+                callable.call(new Object[]{currentBeanConfig});
+            }
+            return currentBeanConfig.getBeanDefinition();
+
+        }
+        finally {
+            currentBeanConfig = current;
+        }
+    }
+    
     protected void setPropertyOnBeanConfig(String name, Object value) {
         if(value instanceof GString)value = value.toString();
         if(addToDeferred(currentBeanConfig, name, value)) {
